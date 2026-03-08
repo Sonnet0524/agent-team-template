@@ -9,7 +9,7 @@
 
 > 🤖 独立的项目管理 Agent 模板 - 让 AI Agent 像人类团队一样协作
 
-**版本**: 1.0.0 | **状态**: Template Ready | **更新**: 2026-03-08
+**版本**: 1.1.0 | **状态**: Production Ready | **更新**: 2026-03-08
 
 ---
 
@@ -263,6 +263,97 @@ PM Agent 具备**元认知能力**：
 |------|------|------|
 | 经验库索引 | `archive/README.md` | 实践经验说明 |
 | SG-AgentTeam 经验 | `archive/sg-agentteam-experiences/` | 历史经验参考 |
+| Knowledge-Assistant 经验 | `archive/knowledge-assistant-experiences/` | v1.1实战经验 ⭐ |
+
+---
+
+## 🆕 v1.1.0 新特性
+
+### 验证的工作模式
+
+v1.1.0 版本通过 **knowledge-assistant-dev** 项目验证了以下核心工作模式：
+
+#### 1. 并行启动多个Agent
+
+**场景**: 多个独立任务需要并行执行
+
+**方法**:
+```bash
+# 并行启动多个Agent
+opencode run --agent core "任务A..." > logs/core.log 2>&1 &
+opencode run --agent ai "任务B..." > logs/ai.log 2>&1 &
+opencode run --agent integration "任务C..." > logs/integration.log 2>&1 &
+```
+
+**效果**:
+- ✅ 开发周期从6周缩短到3天
+- ✅ PM Team工作量降低80%
+- ✅ 充分利用并行能力
+
+详见: [并行启动Agent经验](agents/pm/experiences/parallel-agent-launch-20260308.md)
+
+#### 2. 任务文件 + 报告文件机制
+
+**场景**: PM Agent与Team Agent的信息交换
+
+**方法**:
+```
+tasks/
+  ├── core-task.md      # PM Agent创建
+  ├── ai-task.md
+  └── integration-task.md
+
+reports/
+  ├── core-report.md    # Team Agent生成
+  ├── ai-report.md
+  └── integration-report.md
+```
+
+**优势**:
+- 任务描述完整，避免理解偏差
+- 报告格式统一，便于汇总
+- 历史记录可追溯
+
+#### 3. 被动接收报告模式
+
+**原则**:
+- ❌ 不主动轮询Agent进度
+- ✅ 等待Agent生成报告文件
+- ✅ 用户询问时检查reports/目录
+
+**效果**: 减少PM Team干预，Agent自主完成
+
+#### 4. 权限配置最佳实践
+
+**问题**: 非交互模式下权限被自动拒绝
+
+**解决**:
+```json
+{
+  "agent": {
+    "core": {
+      "permission": {
+        "edit": "allow"  // 必须为allow
+      }
+    }
+  }
+}
+```
+
+### 实战数据
+
+| 指标 | 目标 | 实际 | 提升 |
+|------|------|------|------|
+| 开发周期 | 6周 | 3天 | 93% ⬇️ |
+| 测试覆盖率 | >80% | 91.7% | 15% ⬆️ |
+| PM工作量 | 高 | 低 | 80% ⬇️ |
+| 并行任务数 | 1 | 3-5 | 300% ⬆️ |
+
+### 完整案例
+
+**项目**: [Knowledge Assistant](https://github.com/Sonnet0524/knowledge-assistant)  
+**版本**: v1.1.0 → v1.2.0  
+**详情**: [archive/knowledge-assistant-experiences/](archive/knowledge-assistant-experiences/)
 
 ---
 

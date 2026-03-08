@@ -27,6 +27,8 @@ archive/
 │   ├── ai/                      # AI Team 经验
 │   ├── test/                    # Test Team 经验
 │   └── integration/             # Integration Team 经验
+├── knowledge-assistant-experiences/  # Knowledge-Assistant 的实践经验 ⭐
+│   └── README.md                # v1.1实战经验总结
 └── README.md                    # 本文件
 ```
 
@@ -44,7 +46,8 @@ archive/
 ## 经验列表
 
 ### PM 经验
-- [待添加]
+- [并行启动多个Agent - Knowledge Assistant v1.2](../agents/pm/experiences/parallel-agent-launch-20260308.md) ⭐
+- [v1.1开发周期管理 - Knowledge Assistant v1.1](../agents/pm/experiences/v1.1-development-20260308.md) ⭐
 
 ### Core 经验
 - [待添加]
@@ -57,6 +60,21 @@ archive/
 
 ### Integration 经验
 - [待添加]
+
+---
+
+## 项目经验库
+
+### Knowledge-Assistant 项目 ⭐
+- **路径**: `knowledge-assistant-experiences/`
+- **版本**: v1.1.0 → v1.2.0
+- **亮点**: 并行启动Agent、任务文件机制、被动接收报告
+- **效果**: 开发周期缩短93%，测试覆盖率91.7%
+- **详见**: [knowledge-assistant-experiences/README.md](knowledge-assistant-experiences/README.md)
+
+### SG-AgentTeam 项目
+- **路径**: `sg-agentteam-experiences/`
+- **状态**: 待整理
 
 ---
 
