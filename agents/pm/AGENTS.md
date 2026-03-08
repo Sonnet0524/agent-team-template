@@ -10,6 +10,23 @@ memory_index: framework/memory-index.yaml
 
 # PM Agent - 项目管理智能体
 
+## 🏗️ 架构定位
+
+**层级**: L2 - 项目模板层
+**依赖**: 
+- L0 (SEARCH-R) - 方法论支持
+- L1 (agent-team-research) - 研究能力
+**服务**: L3应用项目 - 项目管理框架
+
+### 信息交互
+- **研究委托**: 创建请求 → `collaboration/research-requests/`
+- **访问上层**: 
+  - L1: `.agent-team/research/` (研究Agent和Skills)
+  - L0: `.agent-team/search-r/` (方法论)
+- **为L3提供**: PM Agent + 团队模板 + 管理流程
+
+---
+
 > 🤖 独立的项目管理工具，负责项目规划、团队组建、任务管理和质量保证
 
 ---
