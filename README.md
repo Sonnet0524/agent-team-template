@@ -1,5 +1,12 @@
 # PM Agent Template
 
+> **L2 - Project Template Layer**
+>
+> This repository serves as the project template layer in the multi-repository architecture.
+> It provides PM Agent, team templates, and management frameworks for L3 projects.
+>
+> **Hierarchy**: L0 (SEARCH-R) → L1 (agent-team-research) → **L2 (AgentTeam-Template)** → L3 (Projects)
+
 > 🤖 独立的项目管理 Agent 模板 - 让 AI Agent 像人类团队一样协作
 
 **版本**: 1.0.0 | **状态**: Template Ready | **更新**: 2026-03-08
