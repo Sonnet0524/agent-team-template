@@ -19,22 +19,5 @@
         }
       }
     }
-  },
-  "_comment": {
-    "permission_guide": {
-      "interactive_mode": "edit: 'ask' - PM Agent交互式启动时可以询问用户",
-      "non_interactive_mode": "edit: 'allow' - Team Agent后台启动时必须为allow",
-      "example": {
-        "core": {
-          "permission": {
-            "edit": "allow",
-            "bash": {
-              "pytest *": "allow",
-              "git push": "ask"
-            }
-          }
-        }
-      }
-    }
   }
 }

@@ -77,6 +77,185 @@ cp -r agents/_templates/core-team agents/my-core-team
 # 复制 start-pm.sh 并修改
 ```
 
+### Agent 启动规范（详细）⭐
+
+基于 knowledge-assistant v1.1 & v1.2 的实践验证
+
+#### 1. 启动前准备
+
+**检查目录**:
+```bash
+mkdir -p tasks reports logs
+```
+
+**创建任务文件**（必需）:
+```bash
+cat > tasks/{team}-{task}.md << 'EOF'
+# Task: [任务名称]
+
+## Requirements
+[具体要求]
+
+## Acceptance Criteria
+- [ ] [验收标准]
+
+## Output
+完成后写入 reports/{team}-{task}-report.md
+EOF
+```
+
+#### 2. 权限配置（非交互模式必需）
+
+**opencode.json 配置**:
+```json
+{
+  "agent": {
+    "{team}": {
+      "permission": {
+        "edit": "allow"  // 必须为allow
+      }
+    }
+  }
+}
+```
+
+**原因**: `opencode run` 是非交互模式，无法响应权限确认，会被自动拒绝
+
+#### 3. 标准启动流程
+
+```bash
+# 启动命令
+opencode run --agent {team} "请读取 tasks/{task}.md 并完成，结果写入 reports/{report}.md" > logs/{team}.log 2>&1 &
+
+# 记录PID（可选）
+echo "{team} started with PID: $!"
+
+# PM Agent继续工作（不等待）
+```
+
+**关键要素**:
+- `opencode run` - 非交互式命令（必须）
+- `--agent {team}` - 指定Agent名称（必须）
+- `"..."` - message包含任务和报告文件路径（必须）
+- `> logs/{team}.log 2>&1` - 重定向日志（必须）
+- `&` - 后台运行（必须）
+
+#### 4. 被动接收报告
+
+**正确做法**:
+```bash
+# 用户询问时检查报告
+ls -la reports/
+cat reports/{team}-{task}-report.md
+
+# 查看运行中的Agent（必要时）
+ps aux | grep "opencode run --agent"
+
+# 查看日志（必要时）
+tail -50 logs/{team}.log
+```
+
+**错误做法**:
+- ❌ 轮询进度 `tail -f logs/core.log`
+- ❌ 定期检查报告文件
+- ❌ 主动等待Agent完成
+
+#### 5. 并行启动最佳实践
+
+**依赖分析原则**:
+- ✅ 无依赖任务可立即并行
+- ✅ 有依赖任务等待前置完成
+- ✅ Test Team任务等待开发完成
+
+**启动示例**:
+```bash
+# Phase 1: 并行启动无依赖任务
+opencode run --agent core "请读取 tasks/core-task.md 并完成，结果写入 reports/core-report.md" > logs/core.log 2>&1 &
+opencode run --agent ai "请读取 tasks/ai-task.md 并完成，结果写入 reports/ai-report.md" > logs/ai.log 2>&1 &
+
+# Phase 2: 等待Phase 1完成后
+if [ -f reports/core-report.md ] && [ -f reports/ai-report.md ]; then
+    opencode run --agent integration "集成任务..." > logs/integration.log 2>&1 &
+fi
+```
+
+#### 6. Team Agent vs 临时Agent
+
+| 类型 | 启动方式 | 适用场景 | PM Agent行为 |
+|------|---------|---------|-------------|
+| Team Agent | `opencode run --agent {team}` | 复杂、专业任务 | 后台运行，继续工作 |
+| 临时Agent | `task("...")` | 简单、一次性任务 | 同步等待结果 |
+
+#### 7. 常见错误
+
+**错误1: 使用task工具启动Team Agent**
+```bash
+# ❌ 错误
+task("启动Core Team处理...")
+
+# ✅ 正确
+opencode run --agent core "任务..." > logs/core.log 2>&1 &
+```
+
+**错误2: 使用交互式命令**
+```bash
+# ❌ 错误
+opencode --agent core
+
+# ✅ 正确
+opencode run --agent core "任务..." > logs/core.log 2>&1 &
+```
+
+**错误3: 忘记后台运行**
+```bash
+# ❌ 错误
+opencode run --agent core "任务..." > logs/core.log 2>&1
+
+# ✅ 正确
+opencode run --agent core "任务..." > logs/core.log 2>&1 &
+```
+
+**错误4: message不清晰**
+```bash
+# ❌ 错误
+opencode run --agent core "做数据处理"
+
+# ✅ 正确
+opencode run --agent core "请读取 tasks/core-data-001.md 并完成，结果写入 reports/core-data-001-report.md"
+```
+
+**错误5: 权限配置错误**
+```json
+// ❌ 错误
+{
+  "agent": {
+    "core": {
+      "permission": {
+        "edit": "ask"  // 非交互模式会被拒绝
+      }
+    }
+  }
+}
+
+// ✅ 正确
+{
+  "agent": {
+    "core": {
+      "permission": {
+        "edit": "allow"
+      }
+    }
+  }
+}
+```
+
+**实践经验**: 
+- knowledge-assistant项目在3天内完成原计划6周的任务
+- 并行启动3-5个Agent，PM工作量降低80%
+- 详见：`agents/pm/experiences/parallel-agent-launch-20260308.md`
+
+---
+
 ### Team 状态跟踪
 
 维护 `status/agent-status.md`：

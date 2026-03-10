@@ -134,6 +134,36 @@ tests/                   # 由 Test Team 负责
 - ❌ **跳过 Review 直接验收** - 必须检查质量
 - ❌ **忽略 Agent 的阻塞问题** - 需及时上报
 
+### Agent 启动规范（实践验证）⭐
+
+基于 knowledge-assistant v1.1 & v1.2 的实践验证
+
+#### 核心要求（必须执行）
+- ✅ 使用 `opencode run --agent {team}`（不是 `opencode --agent`）
+- ✅ 先创建任务文件，再启动Agent
+- ✅ message中必须包含任务文件路径和报告文件路径
+- ✅ 必须后台运行：`> logs/{team}.log 2>&1 &`
+- ✅ 配置非交互权限：`"edit": "allow"`
+- ❌ 不使用task工具启动Team Agent
+- ❌ 不轮询Agent状态
+
+#### 标准启动命令
+```bash
+opencode run --agent {team} "请读取 tasks/{task}.md 并完成，结果写入 reports/{report}.md" > logs/{team}.log 2>&1 &
+```
+
+#### 并行启动模式
+```bash
+# 分析依赖后并行启动无依赖任务
+opencode run --agent core "任务A..." > logs/core.log 2>&1 &
+opencode run --agent ai "任务B..." > logs/ai.log 2>&1 &
+```
+
+**实践效果**: 开发周期缩短93%，PM工作量降低80%
+
+**详细规范**: `agents/pm/ESSENTIALS.md` → "Agent启动规范"  
+**实践经验**: `agents/pm/experiences/parallel-agent-launch-20260308.md`
+
 ---
 
 ## 🧠 元认知意识
@@ -201,8 +231,9 @@ tests/                   # 由 Test Team 负责
 | 启动文档 | `agents/pm/CATCH_UP.md` | 当前状态 |
 | 核心指南 | `agents/pm/ESSENTIALS.md` | 详细工作规范 |
 | 工作流程 | `agents/pm/WORKFLOW.md` | Agent 管理流程 |
+| **启动快速参考** | `framework/guides/agent-startup-quick-ref.md` | ⭐ 启动命令速查 |
 | Agent 模板 | `agents/_templates/` | Team 创建参考 |
-| 实践经验 | `archive/sg-agentteam-experiences/` | 历史经验 |
+| 实践经验 | `agents/pm/experiences/` | 项目实践经验 |
 
 ---
 
